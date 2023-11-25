@@ -11,17 +11,15 @@ async def unofficial_handle_response(message, client) -> str:
 
 async def bard_handle_response(message, client) -> str:
     response = await sync_to_async(client.chatbot.ask)(message)
-    responseMessage = response["content"]
-    return responseMessage
+    return response["content"]
 
 async def bing_handle_response(message, client) -> str:
     async for response in client.chatbot.ask_stream(message):
         responseMessage = response
     if len(responseMessage[1]["item"]["messages"]) > 1 and "text" in responseMessage[1]["item"]["messages"][1]:
         return responseMessage[1]["item"]["messages"][1]["text"]
-    else:
-        await client.chatbot.reset()
-        raise Exception("Bing is unable to continue the previous conversation and will automatically RESET this conversation.")
+    await client.chatbot.reset()
+    raise Exception("Bing is unable to continue the previous conversation and will automatically RESET this conversation.")
 
 # prompt engineering
 async def switch_persona(persona, client) -> None:
