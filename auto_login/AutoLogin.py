@@ -71,14 +71,13 @@ class GoogleBardAutoLogin():
 
     def get_cookie(self):
         cookie_list = self.get_cookie_list()
-        if cookie_list != None:
-            print('Finding "__Secure-1PSID" cookie ...')
-            for cookie_dict in cookie_list:
-                if cookie_dict['name'] == '__Secure-1PSID':
-                    return cookie_dict['value']
-            raise NoSuchElementException('No element has "__Secure-1PSID" value on its "name" key.')
-        else:
+        if cookie_list is None:
             return None
+        print('Finding "__Secure-1PSID" cookie ...')
+        for cookie_dict in cookie_list:
+            if cookie_dict['name'] == '__Secure-1PSID':
+                return cookie_dict['value']
+        raise NoSuchElementException('No element has "__Secure-1PSID" value on its "name" key.')
 
 class MicrosoftBingAutoLogin():
     def __init__(self, bing_account, bing_password, chrome_version):

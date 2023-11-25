@@ -189,7 +189,7 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
             chat_model_status = "ChatGPT(UNOFFICIAL)"
         elif client.chat_model == "OFFICIAL":
             chat_model_status = "OpenAI API(OFFICIAL)"
-        if client.chat_model != "UNOFFICIAL" and client.chat_model != "OFFICIAL":
+        if client.chat_model not in ["UNOFFICIAL", "OFFICIAL"]:
             chat_engine_status = "x"
         elif client.openAI_gpt_engine == "text-davinci-002-render-sha":
             chat_engine_status = "gpt-3.5"
@@ -200,6 +200,7 @@ chat-model: {chat_model_status}
 gpt-engine: {chat_engine_status}
 ```
 """)
+
 
 
     @client.tree.command(name="draw", description="Generate an image with the Dalle2 model")
@@ -320,19 +321,20 @@ gpt-engine: {chat_engine_status}
 
     @client.event
     async def on_message(message):
-        if client.is_replying_all == "True":
-            if message.author == client.user:
-                return
-            if client.replying_all_discord_channel_id:
-                if message.channel.id == int(client.replying_all_discord_channel_id):
-                    username = str(message.author)
-                    user_message = str(message.content)
-                    client.current_channel = message.channel
-                    logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({client.current_channel})")
+        if client.is_replying_all != "True":
+            return
+        if message.author == client.user:
+            return
+        if client.replying_all_discord_channel_id:
+            if message.channel.id == int(client.replying_all_discord_channel_id):
+                username = str(message.author)
+                user_message = str(message.content)
+                client.current_channel = message.channel
+                logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({client.current_channel})")
 
-                    await client.enqueue_message(message, user_message)
-            else:
-                logger.exception("replying_all_discord_channel_id not found, please use the command `/replyall` again.")
+                await client.enqueue_message(message, user_message)
+        else:
+            logger.exception("replying_all_discord_channel_id not found, please use the command `/replyall` again.")
 
     TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
